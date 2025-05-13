@@ -1,2 +1,2 @@
 # calc
-Scientific calculator, from zero.
+Scientific calculator, in python.
