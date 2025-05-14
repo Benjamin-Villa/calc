@@ -1,5 +1,7 @@
 import math
 
+constanteMatematica = {"e",'pi'}
+
 operadorBinario = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%':2, '^': 4}
 # Set of unary function names
 funcionesUnitarias = {'sin','cos','tan','asin','acos','atan','exp','ln'}
@@ -8,38 +10,46 @@ def tokenizar(ecuacion):
     tokens = []
     numero = ""
     i = 0
+    print("ECUACION A TOKENIZAR: " + ecuacion)
     for char in ecuacion:
         if char.isdigit() or char == '.':
             # Es o número entero o decimal
             if numero.isalnum() and not numero.isdigit():
                  # Si no se estaba construyendo número, añadir token y reiniciar num
                  tokens.append(numero)
+                 print("NUEVO TOKEN: " + numero)
                  numero = ""
             numero += char
         elif char in operadorBinario:
             # Operador binario
             if numero: # Si ya tenía un token, añadirlo y reiniciar
                 tokens.append(numero)
+                print("NUEVO TOKEN: " + numero)
                 numero = ""
             tokens.append(char)
+            print("NUEVO TOKEN: " + char)
         elif char.isspace():
             # Espacio significa reiniciar
             if numero:
                 tokens.append(numero)
+                print("NUEVO TOKEN: " + numero)
                 numero = ""
         elif char.isalpha():
             #Encuentro letra
             if numero.isdigit() or numero.count('.') == 1:
                  # si estaba haciendo un número, añadir a token y reiniciar
                  tokens.append(numero)
+                 print("NUEVO TOKEN: " + numero)
                  numero = ""
             numero += char
         elif char in {"(", ")"}:
             # Paréntesis
             if numero: # Si estaba haciendo algo, guardarlo y reiniciar.
                 tokens.append(numero)
+                print("NUEVO TOKEN: " + numero)
                 numero = ""
             tokens.append(char)
+            print("NUEVO TOKEN: " + char)
         else:
             # Ignorar otros caracteres.
             pass
@@ -47,11 +57,15 @@ def tokenizar(ecuacion):
     # Añadir token al final
     if numero:
         tokens.append(numero)
-
+        print("NUEVO TOKEN: " + numero)
+    print(f"TOKENS FINALES: {tokens}")
     return tokens
 
 
 def polaca_inversa(input):
+    print("CONSTRUCCION NPI")
+    if not input:
+        return "EV"
     tokens = tokenizar(input)
     salida = []
     operadores = [] # pila
@@ -60,12 +74,14 @@ def polaca_inversa(input):
         return operadorBinario.get(op, 0) # Get precedence, default to 0 for non-binary ops
 
     for token in tokens:
-        if token.replace('.', '', -1).isdigit() or '':
+        if token.replace('.', '', -1).isdigit() or token in constanteMatematica:
             # Si es un número, sin importar si es decimal
             salida.append(token)
+            print("NUEVO VALOR: " + token)
         elif token in funcionesUnitarias:
             # Si es función, añadir a la pila
             operadores.append(token)
+            print("NUEVA FUNCION: " + token)
         elif token in operadorBinario:
             # Si tenemos operador
             while (operadores and
@@ -74,6 +90,7 @@ def polaca_inversa(input):
                     (precedencia(operadores[-1]) == precedencia(token) and token != '^'))): # Left-associativity except for power
                 salida.append(operadores.pop())
             operadores.append(token)
+            print('NUEVO OPERADOR: ' + token)
         elif token == '(':
             operadores.append(token)
         elif token == ')':
@@ -90,20 +107,30 @@ def polaca_inversa(input):
     while operadores:
         # Si quedan paréntesis, está mal la entrada.
         if operadores[-1] == '(':
-            return "Error, paréntesis incorrectos."
+            return "EP"
         salida.append(operadores.pop())
-
+    print(f"NPI FINAL: {salida}")
     return salida
 
 def evaluar(input):
     tokens = polaca_inversa(input)
-    if not tokens: # Handle error from polaca_inversa
+    if not tokens: # si no sale nada de los tokens
         return "Expresión no debe ser nula"
+
+    if tokens == "EP":
+        return "Error de paréntesis"
+    elif tokens == "EV":
+        return "Expresión no debe ser vacía"
+
 
     pila = [] # Stack for evaluation
 
     for token in tokens: # Iterate through RPN tokens, NOT the original input string
-        if token.replace('.', '', 1).isdigit():
+        if token.replace('.', '', 1).isdigit() or token in constanteMatematica:
+            if token == 'pi':
+                token = math.pi
+            elif token == 'e':
+                token = math.e
             # If the token is a number, push it as a float onto the evaluation stack
             pila.append(float(token)) # Corrected: Convert to float
         elif token in funcionesUnitarias:
@@ -111,6 +138,10 @@ def evaluar(input):
             if not pila:
                 return "Error de sintaxis"
             arg = pila.pop()
+            if arg == "e":
+                arg = math.e
+            elif arg == "pi":
+                arg = math.pi
             try:
                 # Ensure argument is a float before passing to math functions
                 if token == 'sin':
@@ -144,10 +175,10 @@ def evaluar(input):
         elif token in operadorBinario:
             # If the token is a binary operator
             if len(pila) < 2 and token in {'+','-'}:
-                arg1 = pila.pop()
+                arg = pila.pop()
                 if token == '-':
-                    arg1 = arg1*-1
-                pila.append(arg1)
+                    arg = arg*-1
+                pila.append(arg)
             elif len(pila) < 2 and token not in {'+','-'}:
                 return "Error de sintaxis"
             else:
@@ -155,7 +186,6 @@ def evaluar(input):
                 # Pop the two top elements (order matters for subtraction and division)
                 arg2 = pila.pop()
                 arg1 = pila.pop()
-
                 try:
                     # Ensure arguments are floats before performing operations
                     if token == '+':
