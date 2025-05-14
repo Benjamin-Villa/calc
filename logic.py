@@ -1,7 +1,5 @@
-import math # Import math for function evaluation (optional, but good practice if you were to evaluate)
+import math
 
-# Define precedence for binary operators
-# Higher number means higher precedence
 operadorBinario = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%':2, '^': 4}
 # Set of unary function names
 funcionesUnitarias = {'sin','cos','tan','asin','acos','atan','exp','ln'}
@@ -62,7 +60,7 @@ def polaca_inversa(input):
         return operadorBinario.get(op, 0) # Get precedence, default to 0 for non-binary ops
 
     for token in tokens:
-        if token.replace('.', '', -1).isdigit():
+        if token.replace('.', '', -1).isdigit() or '':
             # Si es un número, sin importar si es decimal
             salida.append(token)
         elif token in funcionesUnitarias:
@@ -92,16 +90,15 @@ def polaca_inversa(input):
     while operadores:
         # Si quedan paréntesis, está mal la entrada.
         if operadores[-1] == '(':
-            print("Error: Paréntesis")
-            return []
+            return "Error, paréntesis incorrectos."
         salida.append(operadores.pop())
 
     return salida
 
-def evaluarEcuación(input):
-    tokens = polaca_inversa(input) # Get RPN tokens
+def evaluar(input):
+    tokens = polaca_inversa(input)
     if not tokens: # Handle error from polaca_inversa
-        return None
+        return "Expresión no debe ser nula"
 
     pila = [] # Stack for evaluation
 
@@ -112,8 +109,7 @@ def evaluarEcuación(input):
         elif token in funcionesUnitarias:
             # If the token is a unary function
             if not pila:
-                print(f"Error: No hay suficientes argumentos para la función {token}")
-                return None
+                return "Error de sintaxis"
             arg = pila.pop()
             try:
                 # Ensure argument is a float before passing to math functions
@@ -124,8 +120,12 @@ def evaluarEcuación(input):
                 elif token == 'tan':
                     pila.append(math.tan(float(arg)))
                 elif token == 'asin':
+                    if float(arg) > 1 or float(arg) < -1:
+                        return "error de dominio para asin"
                     pila.append(math.asin(float(arg)))
                 elif token == 'acos':
+                    if float(arg) > 1 or float(arg) < -1:
+                        return "error de dominio para acos"
                     pila.append(math.acos(float(arg)))
                 elif token == 'atan':
                     pila.append(math.atan(float(arg)))
@@ -133,53 +133,56 @@ def evaluarEcuación(input):
                     pila.append(math.exp(float(arg)))
                 elif token == 'ln':
                     if float(arg) <= 0:
-                         print("Error: Dominio inválido para ln (el argumento debe ser > 0)")
-                         return None
+                         return "Error de dominio para ln"
                     pila.append(math.log(float(arg)))
                 else:
-                    print(f"Error: Función no soportada: {token}")
-                    return None
+                    return "Error, función no reconocida: " + arg
             except ValueError as e:
                  print(f"Error evaluando función {token} con argumento {arg}: {e}")
                  return None
 
         elif token in operadorBinario:
             # If the token is a binary operator
-            if len(pila) < 2:
-                print(f"Error: No hay suficientes argumentos para el operador {token}")
-                return None
-            # Pop the two top elements (order matters for subtraction and division)
-            arg2 = pila.pop()
-            arg1 = pila.pop()
+            if len(pila) < 2 and token in {'+','-'}:
+                arg1 = pila.pop()
+                if token == '-':
+                    arg1 = arg1*-1
+                pila.append(arg1)
+            elif len(pila) < 2 and token not in {'+','-'}:
+                return "Error de sintaxis"
+            else:
 
-            try:
-                # Ensure arguments are floats before performing operations
-                if token == '+':
-                    pila.append(float(arg1) + float(arg2))
-                elif token == '-':
-                        pila.append(float(arg1) - float(arg2))
-                elif token == '*':
-                        pila.append(float(arg1) * float(arg2))
-                elif token == '/':
-                    if float(arg2) == 0:
-                        print("Error: División por cero")
-                        return None
-                    pila.append(float(arg1) / float(arg2))
-                elif token == '^':
-                    pila.append(float(arg1) ** float(arg2))
-                elif token == '%':
-                    if float(arg2) == 0:
-                        print("Error: Módulo por cero")
-                        return None
-                    pila.append(float(arg1) % float(arg2))
-                elif token == '#':  # Integer division
-                    if float(arg2) == 0:
-                        print("Error: División entera por cero")
-                        return None
-                    pila.append(math.floor(float(arg1) / float(arg2)))
-            except ValueError as e:
-                print(f"Error evaluando operador {token} con argumentos {arg1}, {arg2}: {e}")
-                return None
+                # Pop the two top elements (order matters for subtraction and division)
+                arg2 = pila.pop()
+                arg1 = pila.pop()
+
+                try:
+                    # Ensure arguments are floats before performing operations
+                    if token == '+':
+                        pila.append(float(arg1) + float(arg2))
+                    elif token == '-':
+                            pila.append(float(arg1) - float(arg2))
+                    elif token == '*':
+                            pila.append(float(arg1) * float(arg2))
+                    elif token == '/':
+                        if float(arg2) == 0:
+                            return "Error, división por cero"
+                        pila.append(float(arg1) / float(arg2))
+                    elif token == '^':
+                        if (arg2**-1)%2 == 0 and arg1 <0: # si la potencia se trata de una raíz par
+                            return "Error, raíz par de un número negativo."
+
+                        pila.append(float(arg1) ** float(arg2))
+                    elif token == '%':
+                        if float(arg2) == 0:
+                            return "Error, Módulo por cero"
+                        pila.append(float(arg1) % float(arg2))
+                    elif token == '#':  # Integer division
+                        if float(arg2) == 0:
+                            return "Error, división entera por cero"
+                        pila.append(math.floor(float(arg1) / float(arg2)))
+                except ValueError as e:
+                    return "Error evaluando operador " + token + " con argumentos " + arg1 + " op " + arg2 + "e"
 
 
     # After processing all RPN tokens, the result should be the only element left on the stack
@@ -188,5 +191,4 @@ def evaluarEcuación(input):
         return pila[0]
     else:
         # This indicates an issue with the RPN conversion or input
-        print("Error: Expresión inválida o problema de conversión RPN")
-        return None
+        return "Error: Expresión inválida"
