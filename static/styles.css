@@ -1,0 +1,40 @@
+/* styles.css */
+
+/* Aplicar estilos base a el cuerpo */
+body {
+    @apply font-sans bg-gray-100 flex items-center justify-center h-screen m-0;
+}
+
+/* Estilo para el contenedor principal */
+.container {
+    @apply bg-white p-8 rounded-lg shadow-xl text-center w-full max-w-sm;
+}
+
+/* Estilo para el título */
+h1 {
+    @apply text-2xl font-bold mb-6 text-gray-800;
+}
+
+/* Estilo para el campo de entrada */
+#expression-input {
+    @apply w-full p-3 border border-gray-300 rounded-md mb-4 text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+/* Estilo para el botón de evaluar */
+#evaluate-button {
+    @apply w-full bg-blue-600 text-white p-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+}
+
+/* Estilo para el área de resultado */
+#result-area {
+    @apply mt-6 p-4 border border-gray-300 rounded-md bg-gray-50 text-gray-800 text-lg min-h-[2.5em] flex items-center justify-center;
+}
+
+/* Estilos específicos para los colores del resultado (opcional, basado en tu JS) */
+#result-area[style*="color: green"] {
+    @apply border-green-500 bg-green-100 text-green-800;
+}
+
+#result-area[style*="color: red"] {
+    @apply border-red-500 bg-red-100 text-red-800;
+}

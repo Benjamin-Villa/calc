@@ -1,16 +1,14 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
     // si el contenido de la página ha cargado, podemos empezar
     const expressionInput = document.getElementById('expression-input');
     const evaluateButton = document.getElementById('evaluate-button');
     const resultArea = document.getElementById('result-area');
+    let prevRes = String;
 
     // definir campos y botones
 
-    // Añadir un 'event listener' al botón de evaluar
-    evaluateButton.addEventListener('click', function() {
-        // Si tengo un click, tomar mi texto
+    // Función para evaluar la expresión (la lógica que se repite)
+    function evaluateExpression() {
         const expression = expressionInput.value;
 
         // mostrar que se está calculando
@@ -23,7 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json' // avisar que se envía un json
             },
-            body: JSON.stringify({ expression: expression }) // Convertir el objeto JavaScript a una cadena JSON
+
+            body: JSON.stringify({ expression: expression , previo: prevRes}) // Convertir el objeto JavaScript a una cadena JSON
         })
         .then(response => {
             // Respuesta cruda del servidor, es necesario revisar, en caso de que hubiera errores en la comunicación.
@@ -43,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.result !== undefined) {
                 // Si hay un resultado, mostrarlo
                 resultArea.textContent = 'Resultado: ' + data.result;
+                prevRes = data.result;
                 resultArea.style.color = 'green'; // Opcional: color verde para éxito
             } else if (data.error) {
                  // Si el backend devolvió un error, mostrarlo
@@ -60,5 +60,19 @@ document.addEventListener('DOMContentLoaded', function() {
             resultArea.style.color = 'red';
             console.error('Error en fetch:', error); // Registrar el error en la consola para depuración
         });
+    }
+
+    // Añadir un 'event listener' al botón de evaluar
+    evaluateButton.addEventListener('click', evaluateExpression);
+
+    // Añadir un 'event listener' al campo de entrada para la tecla 'keypress'
+    expressionInput.addEventListener('keypress', function(event) {
+        // Verificar si la tecla presionada es 'Enter' (código 13)
+        if (event.key === 'Enter') {
+            // Prevenir el comportamiento por defecto (ej. enviar un formulario si estuviera dentro de uno)
+            event.preventDefault();
+            // Llamar a la función para evaluar la expresión
+            evaluateExpression();
+        }
     });
 });

@@ -6,15 +6,17 @@ app = Flask(__name__)
 def deploy():
     return render_template('home.html')
 @app.route("/evaluate", methods=['POST'])
-def eval():
+def calcular():
     try:
         # 1. Obtener los datos JSON de la solicitud POST
         data = request.get_json()
+
         if not data or 'expression' not in data:
             # Si los datos no son JSON válidos o no contienen 'expression'
             return jsonify({"error": "Formato de solicitud inválido. Se espera JSON con 'expression'."}), 400
 
         expression = data.get('expression')
+        previo = data.get('previo')
 
         if not expression:
             # Si el campo 'expression' está vacío
@@ -23,7 +25,8 @@ def eval():
         # 2. Llamar a tu función de evaluación
         # Asegúrate de que evaluarEcuación maneja sus propios errores internos
         # y devuelve un valor (ej. float) si es exitoso, o None si hay un error
-        result = logic.evaluar(expression)
+
+        result = logic.evaluar(expression,previo)
 
         # 3. Manejar el resultado de la evaluación
         if not (str(result).replace('.','',-1)
