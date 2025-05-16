@@ -3,9 +3,81 @@ document.addEventListener('DOMContentLoaded', function() {
     const expressionInput = document.getElementById('expression-input');
     const evaluateButton = document.getElementById('evaluate-button');
     const resultArea = document.getElementById('result-area');
+    const myCheckbox = document.getElementById('shift');
+
+
+    const botonSin = document.getElementById('sin');
+    const botonCos = document.getElementById('cos');
+    const botonTan = document.getElementById('tan');
+    const botonSinh = document.getElementById('sinh');
+    const botonCosh = document.getElementById('cosh');
+    const botonTanh = document.getElementById('tanh');
+    const labelCheck = document.getElementById('checkLabel');
+    const botonLn = document.getElementById('loge');
+
+    const botonDot = document.getElementById('DOT');
+    const botonExp = document.getElementById('EXP');
+
+    const botonesTrig = [botonSin,botonTanh,botonSinh,botonCosh,botonTan,botonCos,botonExp,botonDot,botonLn]
+    const nombresArc = {'sin':'ArcSin', 'cos':'ArcCos', 'tan':'ArcTan','sinh':'ArcSinh','cosh':'ArcCosh','tanh':'ArcTanh','EXP':'pi','DOT':'e','loge':'log10'}
+
+
+
+
     let prevRes = String;
 
     // definir campos y botones
+
+    // Asumiendo que tienes un checkbox con un ID, por ejemplo, 'myCheckbox'
+
+    myCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+
+                console.log('Checkbox marcado');
+                labelCheck.style.backgroundColor = '#ff5050'; // Ejemplo: fondo gris
+                labelCheck.style.color = 'white'; // Ejemplo: texto blanco
+                botonesTrig.forEach(function(boton) {
+                    // Verifica que el botón existe antes de intentar cambiar su estil
+                                        // Checkbox marcado: Aplica los estilos deseados
+                    const botonId = boton.id;
+                    boton.style.backgroundColor = '#ff5050'; // Ejemplo: fondo gris
+                    boton.style.color = 'white'; // Ejemplo: texto blanco
+                    if (nombresArc[botonId]) {
+                            // Almacenar el texto original en un atributo de datos (data attribute)
+                            // para poder restaurarlo fácilmente después
+                            if (!boton.dataset.originalText) {
+                                boton.dataset.originalText = boton.textContent;
+                            }
+                            boton.textContent = nombresArc[botonId];
+                        }
+                                        // ... añade otras propiedades de estilo que quieras cambiar ...
+                });
+            }else{
+                labelCheck.style.backgroundColor = ''; // Ejemplo: fondo gris
+                labelCheck.style.color = ''; // Ejemplo: texto blanco
+                labelCheck.style.border = ''; // Ejemplo: borde
+                botonesTrig.forEach(function(boton) {
+
+                                        // Checkbox desmarcado: Restaura los estilos originales (o los por defecto)
+                                        // Puedes restaurar a un valor específico o a una cadena vacía para usar el estilo CSS por defecto
+                                        boton.style.backgroundColor = ''; // Restaura al estilo CSS o por defecto
+                                        boton.style.color = '';
+                                        boton.style.border = '';
+                                        // ... restaura otras propiedades ...
+                    if (boton.dataset.originalText) {
+                            boton.textContent = boton.dataset.originalText;
+                            // Opcional: eliminar el atributo de datos si ya no es necesario
+                            // delete boton.dataset.originalText;
+                        } else {
+                             // Si no se almacenó el texto original, puedes restaurar a un valor conocido
+                             // Esto depende de cómo manejes los textos iniciales de los botones
+                             // Por ejemplo: boton.textContent = 'Sin'; // Si sabes que el ID 'sin' siempre empieza con 'Sin'
+                        }
+
+                }
+
+            );
+    }});
 
     // Función para evaluar la expresión (la lógica que se repite)
     function evaluateExpression() {

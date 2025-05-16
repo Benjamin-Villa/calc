@@ -1,40 +1,112 @@
-/* styles.css */
 
-/* Aplicar estilos base a el cuerpo */
+/* Estilos generales para el cuerpo y el contenedor principal */
 body {
-    @apply font-sans bg-gray-100 flex items-center justify-center h-screen m-0;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    flex-direction: column;
 }
 
-/* Estilo para el contenedor principal */
 .container {
-    @apply bg-white p-8 rounded-lg shadow-xl text-center w-full max-w-sm;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px; /* Espacio entre el contenedor superior y el de botones */
 }
 
-/* Estilo para el título */
-h1 {
-    @apply text-2xl font-bold mb-6 text-gray-800;
+/* Estilos para el contenedor de botones */
+/* Seleccionamos el segundo contenedor o le damos una clase específica en el HTML */
+/* Asumiendo que el segundo div.container es el de los botones */
+.container:nth-of-type(2) { /* Selecciona el segundo div con la clase container */
+    display: grid; /* Aplica el layout de rejilla */
+    grid-template-columns: repeat(5, 1fr); /* Crea 5 columnas de igual ancho */
+    grid-template-rows: repeat(7, 1fr);    /* Crea 4 filas de igual altura */
+    gap: 10px; /* Espacio entre los elementos de la rejilla */
+    width: 100%; /* O ajusta el ancho según necesites */
+    max-width: 500px; /* Ancho máximo opcional */
 }
 
-/* Estilo para el campo de entrada */
-#expression-input {
-    @apply w-full p-3 border border-gray-300 rounded-md mb-4 text-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-500;
+/* Estilos para los divs que contienen los botones dentro de la rejilla */
+.container:nth-of-type(2) > div {
+    display: flex; /* Usa flexbox para centrar el botón dentro del div */
+    justify-content: center;
+    align-items: center;
 }
 
-/* Estilo para el botón de evaluar */
+.container:nth-of-type(2) label{
+    input[type="checkbox"] {
+    visibility: hidden; display: none;
+}   user-select: none;
+    width: 80%; /* Hace que el botón ocupe el ancho del div padre */
+    padding: 15px 10px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #e9e9e9;
+    transition: background-color 0.2s ease;
+}
+
+
+/* Estilos para los botones */
+.container:nth-of-type(2) button {
+    width: 100%; /* Hace que el botón ocupe el ancho del div padre */
+    padding: 15px 10px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #e9e9e9;
+    transition: background-color 0.2s ease;
+}
+
+.container:nth-of-type(2) button:hover {
+    background-color: #dcdcdc;
+}
+
+/* Estilos específicos para algunos botones si es necesario */
 #evaluate-button {
-    @apply w-full bg-blue-600 text-white p-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+    /* Puedes añadir estilos específicos para el botón de evaluar si está en este contenedor */
+    /* En tu HTML, el botón '=' está en el primer contenedor, así que este ID no aplicaría aquí */
 }
 
-/* Estilo para el área de resultado */
+/* Estilos para operadores (fondo rojo/naranja) */
+#DEL, #AC, #multiplication, #division, #plus, #minus, #EQ {
+    background-color: #ff9500; /* Color para operadores */
+    color: white;
+}
+
+#DEL:hover, #AC:hover, #multiplication:hover, #division:hover, #plus:hover, #minus:hover, #EQ:hover {
+     background-color: #e08b00;
+}
+
+#EQ {
+    grid-column: span 1; /* El botón de igual ocupa 1 columna */
+    /* Si quisieras que ocupara más, ajustarías span */
+}
+
+/* Estilos para el área de resultado */
 #result-area {
-    @apply mt-6 p-4 border border-gray-300 rounded-md bg-gray-50 text-gray-800 text-lg min-h-[2.5em] flex items-center justify-center;
+    margin-top: 15px;
+    font-size: 1.1em;
+    min-height: 1.2em; /* Asegura que tenga algo de altura incluso vacío */
+    text-align: left; /* Alinea el texto a la derecha */
+    word-break: break-all; /* Evita que el texto largo desborde */
 }
 
-/* Estilos específicos para los colores del resultado (opcional, basado en tu JS) */
-#result-area[style*="color: green"] {
-    @apply border-green-500 bg-green-100 text-green-800;
-}
-
-#result-area[style*="color: red"] {
-    @apply border-red-500 bg-red-100 text-red-800;
+/* Estilos para el campo de entrada */
+#expression-input {
+    width: calc(100% - 20px); /* Ancho ajustado con padding */
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Incluye padding y borde en el ancho total */
 }

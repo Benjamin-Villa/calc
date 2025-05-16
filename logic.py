@@ -3,7 +3,7 @@ import math
 constanteMatematica = {"e", 'pi', 'ans'}
 
 operadorBinario = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%': 2, '^': 4, 'log': 4}
-funcionesUnitarias = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'exp', 'ln'}
+funcionesUnitarias = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'exp', 'ln','°'}
 
 
 def tokenizar(ecuacion):
@@ -84,6 +84,15 @@ def tokenizar(ecuacion):
                 numero = ""
             tokens.append(char)
             print("NUEVO TOKEN: " + char)
+        elif char == '°':
+            #conversor rads a grados
+            if numero:  # Si estaba haciendo algo, guardarlo y reiniciar.
+                tokens.append(numero)
+                print("NUEVO TOKEN: " + numero)
+                numero = ""
+            tokens.append('°')
+            print("NUEVO TOKEN: °")
+
         else:
             # Ignorar otros caracteres.
             pass
@@ -216,6 +225,9 @@ def evaluar(input, previo):
                     if arg <= 0:
                         return "Error de dominio para ln"
                     pila.append(math.log(arg))
+                elif token == '°':
+                    #convertir grados a rads
+                    pila.append(arg*math.pi/180)
                 else:
                     return "Error, función no reconocida: " + str(arg)
             except ValueError as e:
