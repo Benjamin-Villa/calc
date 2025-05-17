@@ -18,11 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonDot = document.getElementById('DOT');
     const botonExp = document.getElementById('EXP');
 
-    const botonesTrig = [botonSin,botonTanh,botonSinh,botonCosh,botonTan,botonCos,botonExp,botonDot,botonLn]
-    const nombresArc = {'sin':'ArcSin', 'cos':'ArcCos', 'tan':'ArcTan','sinh':'ArcSinh','cosh':'ArcCosh','tanh':'ArcTanh','EXP':'pi','DOT':'e','loge':'log10'}
-
-
-
+    const botonesShift = [botonSin,botonTanh,botonSinh,botonCosh,botonTan,botonCos,botonExp,botonDot,botonLn]
+    const nombresArc = {'sin':'ArcSin', 'cos':'ArcCos', 'tan':'ArcTan','sinh':'ArcSinH','cosh':'ArcCosH','tanh':'ArcTanH','EXP':'pi','DOT':'e','loge':'log10'}
 
     let prevRes = String;
 
@@ -36,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Checkbox marcado');
                 labelCheck.style.backgroundColor = '#ff5050'; // Ejemplo: fondo gris
                 labelCheck.style.color = 'white'; // Ejemplo: texto blanco
-                botonesTrig.forEach(function(boton) {
+                botonesShift.forEach(function(boton) {
                     // Verifica que el botón existe antes de intentar cambiar su estil
                                         // Checkbox marcado: Aplica los estilos deseados
                     const botonId = boton.id;
@@ -56,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labelCheck.style.backgroundColor = ''; // Ejemplo: fondo gris
                 labelCheck.style.color = ''; // Ejemplo: texto blanco
                 labelCheck.style.border = ''; // Ejemplo: borde
-                botonesTrig.forEach(function(boton) {
+                botonesShift.forEach(function(boton) {
 
                                         // Checkbox desmarcado: Restaura los estilos originales (o los por defecto)
                                         // Puedes restaurar a un valor específico o a una cadena vacía para usar el estilo CSS por defecto

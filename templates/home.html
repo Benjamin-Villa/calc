@@ -9,22 +9,26 @@
 <body>
     <div class="container">
         <h1>Calculadora</h1>
-        <input type="text" id="expression-input" placeholder="Introduce tu expresión infija">
-        <button id="evaluate-button">=</button>
+        <input type="text" id="expression-input" placeholder="Expresión a calcular">
         <div id="result-area"></div>
     </div>
 
     <div class=" container">
         <label id ="checkLabel"> <input type="checkbox" id="shift" value="Fin Rot">Shift </label>
+        <div><button id="mod">mod</button></div>
+        <div><button id="floordiv">//</button></div>
+        <div><button id="blank3">b3</button></div>
+        <div><button id="loge">ln</button></div>
         <div><button id="sin">Sin</button></div>
         <div><button id="cos">Cos</button></div>
         <div><button id="tan">Tan</button></div>
-        <div><button id="power">^</button></div>
         <div><button id="degrees">°</button></div>
+        <div><button id="power">^</button></div>
         <div><button id="sinh">SinH</button></div>
         <div><button id="cosh">CosH</button></div>
         <div><button id="tanh">TanH</button></div>
-        <div><button id="loge">ln</button></div>
+        <div><button id="leftP">(</button></div>
+        <div><button id="rightP">)</button></div>
         <div><button id="7">7</button></div>
         <div><button id="8">8</button></div>
         <div><button id="9">9</button></div>
@@ -44,7 +48,7 @@
         <div><button id="DOT">.</button></div>
         <div><button id="EXP">EXP</button></div>
         <div><button id="ANS">ANS</button></div>
-        <div><button id="EQ">=</button></div>
+        <button id="evaluate-button">=</button>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
