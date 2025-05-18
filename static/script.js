@@ -19,13 +19,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonExp = document.getElementById('EXP');
 
     const botonesShift = [botonSin,botonTanh,botonSinh,botonCosh,botonTan,botonCos,botonExp,botonDot,botonLn]
-    const nombresArc = {'sin':'ArcSin', 'cos':'ArcCos', 'tan':'ArcTan','sinh':'ArcSinH','cosh':'ArcCosH','tanh':'ArcTanH','EXP':'pi','DOT':'e','loge':'log10'}
+    const nombresArc = {'sin':'ArcSin', 'cos':'ArcCos', 'tan':'ArcTan','sinh':'ArcSinH','cosh':'ArcCosH','tanh':'ArcTanH','EXP':'π','DOT':'e','loge':'log10'}
 
     let prevRes = String;
 
     // definir campos y botones
 
-    // Asumiendo que tienes un checkbox con un ID, por ejemplo, 'myCheckbox'
+
+    document.querySelectorAll(".add-text").forEach(button => {
+        button.addEventListener("click", () => {
+            const text = button.value; // Obtiene el valor del botón
+            expressionInput.value += text; // Agrega el texto al campo de texto
+            });
+        });
 
     myCheckbox.addEventListener('change', function() {
             if (this.checked) {
@@ -75,6 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             );
     }});
+
+    function writeIntoExpression(event){
+
+
+    }
 
     // Función para evaluar la expresión (la lógica que se repite)
     function evaluateExpression() {

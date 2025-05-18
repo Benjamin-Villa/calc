@@ -1,6 +1,6 @@
 import math
 
-constanteMatematica = {"e", 'pi', 'ans'}
+constanteMatematica = {"e", 'π', 'ans'}
 
 operadorBinario = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%': 2, '^': 4, 'log': 4}
 funcionesUnitarias = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'exp', 'ln','°'}
@@ -16,6 +16,10 @@ def tokenizar(ecuacion):
             # Es o número entero o decimal
             if numero.isalnum() and not numero.isdigit() :
                 # Si no se estaba construyendo número, añadir token y reiniciar num
+
+                tokens.append(numero)
+                print("NUEVO TOKEN: " + numero)
+
                 if tokens:
                     if tokens[-1] == ')':
                         # en caso de multiplicacion implicita con parentesis
@@ -23,23 +27,35 @@ def tokenizar(ecuacion):
                         tokens.append('*')
                         print("NUEVO TOKEN: *")
 
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
+
                 numero = ""
             elif '.' in numero and char == '.':
                 # se estaba construyendo numero, pero el numero ya contiene decimal
-                if tokens:
-                    if tokens[-1] == ')':
-                        # en caso de multiplicacion implicita con parentesis
-                        tokens.append('*')
-                        print("NUEVO TOKEN: *")
-
                 tokens.append(numero)
                 tokens.append('*')
+
+
                 # hay dos números, uno al lado del otro, se trata de multiplicación
                 print("NUEVO TOKEN: " + numero)
+                print("Multiplicación implícita detectada, agregando *")
+                print("NUEVO TOKEN: *")
                 numero = "0"
             numero += char
+        elif char in ['e','π']: # números especiales
+            if numero:  # Si ya tenía un token, añadirlo y reiniciar
+                tokens.append(numero)
+                print("NUEVO TOKEN: " + numero)
+
+                if numero not in funcionesUnitarias:
+                    print("Multiplicación implícita detectada, agregando *")
+                    print("NUEVO TOKEN: *")
+                    tokens.append('*')
+
+            numero = ""
+            tokens.append(char)
+
+
+
         elif char in operadorBinario:
             # Operador binario
             if numero:  # Si ya tenía un token, añadirlo y reiniciar
@@ -56,17 +72,21 @@ def tokenizar(ecuacion):
                 numero = ""
         elif char.isalpha():
             #Encuentro letra
-            if tokens:
-                if tokens[-1] == ')':
-                    #en caso de multiplicacion implicita con parentesis
-                    tokens.append('*')
-                    print("NUEVO TOKEN: *")
-
             if numero.isdigit() or numero.count('.') == 1:
                 # si estaba haciendo un número, añadir a token y reiniciar
                 tokens.append(numero)
                 print("NUEVO TOKEN: " + numero)
+                print("Multiplicación implícita detectada, agregando *")
+                tokens.append('*')
                 numero = ""
+
+            if tokens:
+                if tokens[-1] == ')' or tokens[-1] :
+                    #en caso de multiplicacion implicita con parentesis
+                    tokens.append('*')
+                    print("NUEVO TOKEN: *")
+
+
             numero += char
         elif char in {"(", ")"}:
             # Paréntesis
@@ -179,7 +199,7 @@ def evaluar(input, previo):
 
     for token in tokens:  # Iterate through RPN tokens, NOT the original input string
         if token.replace('.', '', 1).isdigit() or token in constanteMatematica:
-            if token == 'pi':
+            if token == 'π':
                 token = math.pi
             elif token == 'e':
                 token = math.e

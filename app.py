@@ -31,8 +31,9 @@ def calcular():
         # 3. Manejar el resultado de la evaluación
         if not (str(result).replace('.','',-1)
                 .replace('-','',-1)
+                .replace('+', '', -1)
                 .replace('e','',-1).isdigit()):
-            #números en formato matemático pueden contener . - o e. Eliminar todos.
+            #números en formato matemático pueden contener ., -, + o e. Eliminar todos.
             # Si evaluarEcuación devolvió un texto
             # Devolver el error entregado por el backend
             return jsonify(
