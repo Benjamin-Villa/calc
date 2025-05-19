@@ -18,20 +18,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const botonDot = document.getElementById('DOT');
     const botonExp = document.getElementById('EXP');
 
+    const botonDel = document.getElementById('DEL');
+    const botonAc = document.getElementById('AC');
     const botonesShift = [botonSin,botonTanh,botonSinh,botonCosh,botonTan,botonCos,botonExp,botonDot,botonLn]
     const nombresArc = {'sin':'ArcSin', 'cos':'ArcCos', 'tan':'ArcTan','sinh':'ArcSinH','cosh':'ArcCosH','tanh':'ArcTanH','EXP':'π','DOT':'e','loge':'log10'}
+    const altVal = {'sin':'asin()', 'cos':'acos()', 'tan':'atan()','sinh':'asinh()','cosh':'acosh()','tanh':'atanh()','EXP':'π','DOT':'e','loge':'log()'}
 
     let prevRes = String;
 
     // definir campos y botones
 
-
+    expressionInput.
     document.querySelectorAll(".add-text").forEach(button => {
         button.addEventListener("click", () => {
             const text = button.value; // Obtiene el valor del botón
             expressionInput.value += text; // Agrega el texto al campo de texto
             });
         });
+
+    botonAc.addEventListener('click',function (){
+        expressionInput.value = '';
+    })
+
+    botonDel.addEventListener('click',function (){
+        expressionInput.value = expressionInput.value.substring(0,expressionInput.value.length-1)
+    })
 
     myCheckbox.addEventListener('change', function() {
             if (this.checked) {
@@ -51,6 +62,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (!boton.dataset.originalText) {
                                 boton.dataset.originalText = boton.textContent;
                             }
+                            if (!boton.dataset.originalValue) {
+                                boton.dataset.originalValue = boton.value;
+                            }
+                            boton.value = altVal[botonId]
                             boton.textContent = nombresArc[botonId];
                         }
                                         // ... añade otras propiedades de estilo que quieras cambiar ...
@@ -71,21 +86,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             boton.textContent = boton.dataset.originalText;
                             // Opcional: eliminar el atributo de datos si ya no es necesario
                             // delete boton.dataset.originalText;
-                        } else {
-                             // Si no se almacenó el texto original, puedes restaurar a un valor conocido
-                             // Esto depende de cómo manejes los textos iniciales de los botones
-                             // Por ejemplo: boton.textContent = 'Sin'; // Si sabes que el ID 'sin' siempre empieza con 'Sin'
-                        }
+                    }
+                    if (boton.dataset.originalValue) {
+                            boton.value = boton.dataset.originalValue;
+                            // Opcional: eliminar el atributo de datos si ya no es necesario
+                            // delete boton.dataset.originalText;
+                    }
+
 
                 }
 
             );
     }});
-
-    function writeIntoExpression(event){
-
-
-    }
 
     // Función para evaluar la expresión (la lógica que se repite)
     function evaluateExpression() {

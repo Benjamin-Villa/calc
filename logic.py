@@ -3,22 +3,20 @@ import math
 constanteMatematica = {"e", 'π', 'ans'}
 
 operadorBinario = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%': 2, '^': 4, 'log': 4}
-funcionesUnitarias = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'exp', 'ln','°'}
+funcionesUnitarias = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan','sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp','log', 'ln','°'}
 
 
 def tokenizar(ecuacion):
     tokens = []
-    numero = ""
+    nuevoToken = ""
     print("ECUACION A TOKENIZAR: " + ecuacion)
     for char in ecuacion:
         print("ANALIZANDO " + char)
         if char.isdigit() or char == '.':
             # Es o número entero o decimal
-            if numero.isalnum() and not numero.isdigit() :
-                # Si no se estaba construyendo número, añadir token y reiniciar num
-
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
+            if nuevoToken.isalnum() and not nuevoToken.isdigit() and nuevoToken not in constanteMatematica: # no incluye parentesis
+                # Si nuevo token no se trata de letras, añadir el token a la pila y reiniciar
+                # nuevo token se trata definitivamente de una funcion o operador binario.
 
                 if tokens:
                     if tokens[-1] == ')':
@@ -26,73 +24,77 @@ def tokenizar(ecuacion):
                         print("Multiplicación implícita detectada, agregando *")
                         tokens.append('*')
                         print("NUEVO TOKEN: *")
+                # ejemplo: (5)tan1 = (5)*tan1
 
+                tokens.append(nuevoToken)
+                print("NUEVO TOKEN: " + nuevoToken)
+                nuevoToken = ""
 
-                numero = ""
-            elif '.' in numero and char == '.':
+            elif '.' in nuevoToken and char == '.':
                 # se estaba construyendo numero, pero el numero ya contiene decimal
-                tokens.append(numero)
+                tokens.append(nuevoToken)
                 tokens.append('*')
 
 
                 # hay dos números, uno al lado del otro, se trata de multiplicación
-                print("NUEVO TOKEN: " + numero)
+                #ejemplo 5.2.3 = 5.2*0.3
+                print("NUEVO TOKEN: " + nuevoToken)
                 print("Multiplicación implícita detectada, agregando *")
                 print("NUEVO TOKEN: *")
-                numero = "0"
-            numero += char
+                nuevoToken = "0"
+            nuevoToken += char
         elif char in ['e','π']: # números especiales
-            if numero:  # Si ya tenía un token, añadirlo y reiniciar
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
+            if nuevoToken:  # Si ya tenía un token, añadirlo y reiniciar
+                tokens.append(nuevoToken)
+                print("NUEVO TOKEN: " + nuevoToken)
 
-                if numero not in funcionesUnitarias:
+                if nuevoToken not in funcionesUnitarias or nuevoToken != '(':
                     print("Multiplicación implícita detectada, agregando *")
                     print("NUEVO TOKEN: *")
                     tokens.append('*')
 
-            numero = ""
+            nuevoToken = ""
             tokens.append(char)
 
 
 
         elif char in operadorBinario:
             # Operador binario
-            if numero:  # Si ya tenía un token, añadirlo y reiniciar
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
-                numero = ""
+            if nuevoToken:  # Si ya tenía un token, añadirlo y reiniciar
+                tokens.append(nuevoToken)
+                print("NUEVO TOKEN: " + nuevoToken)
+                nuevoToken = ""
             tokens.append(char)
             print("NUEVO TOKEN: " + char)
         elif char.isspace():
             # Espacio significa reiniciar
-            if numero:
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
-                numero = ""
-        elif char.isalpha():
-            #Encuentro letra
-            if numero.isdigit() or numero.count('.') == 1:
+            if nuevoToken:
+                tokens.append(nuevoToken)
+                print("NUEVO TOKEN: " + nuevoToken)
+                nuevoToken = ""
+        elif char.isalpha() and not char.isdigit() or char == '.':
+            #Encuentro letra, definitivamente ningun numero
+            if nuevoToken.isdigit() or nuevoToken.count('.') == 1:
                 # si estaba haciendo un número, añadir a token y reiniciar
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
+                tokens.append(nuevoToken)
+                print("NUEVO TOKEN: " + nuevoToken)
                 print("Multiplicación implícita detectada, agregando *")
                 tokens.append('*')
-                numero = ""
+                nuevoToken = ""
 
             if tokens:
-                if tokens[-1] == ')' or tokens[-1] :
+                if tokens[-1] == ')':
                     #en caso de multiplicacion implicita con parentesis
                     tokens.append('*')
                     print("NUEVO TOKEN: *")
 
 
-            numero += char
+            nuevoToken += char
         elif char in {"(", ")"}:
             # Paréntesis
-            if numero:  # Si estaba haciendo algo, guardarlo y reiniciar.
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
+            if nuevoToken:  # Si estaba haciendo algo, guardarlo y reiniciar.
+                tokens.append(nuevoToken)
+                print("NUEVO TOKEN: " + nuevoToken)
 
                 if (tokens[-1] not in operadorBinario  and tokens[-1] not in funcionesUnitarias
                         and tokens[-1] != '(' and char == '('):
@@ -101,31 +103,30 @@ def tokenizar(ecuacion):
                     tokens.append('*')
                     print("NUEVO TOKEN: *")
 
-                numero = ""
+                nuevoToken = ""
             tokens.append(char)
             print("NUEVO TOKEN: " + char)
         elif char == '°':
             #conversor rads a grados
-            if numero:  # Si estaba haciendo algo, guardarlo y reiniciar.
-                tokens.append(numero)
-                print("NUEVO TOKEN: " + numero)
-                numero = ""
+            if nuevoToken:  # Si estaba haciendo algo, guardarlo y reiniciar.
+                tokens.append(nuevoToken)
+                print("NUEVO TOKEN: " + nuevoToken)
+                nuevoToken = ""
             tokens.append('°')
             print("NUEVO TOKEN: °")
-
         else:
-            # Ignorar otros caracteres.
+            return "ES"
             pass
 
     # Añadir token al final
-    if numero:
+    if nuevoToken:
         if tokens:
             if tokens[-1] == ')':
                 tokens.append('*')
                 print("NUEVO TOKEN: *")
 
-        tokens.append(numero)
-        print("NUEVO TOKEN: " + numero)
+        tokens.append(nuevoToken)
+        print("NUEVO TOKEN: " + nuevoToken)
     print(f"TOKENS FINALES: {tokens}")
     return tokens
 
@@ -135,6 +136,8 @@ def polaca_inversa(input):
     if not input:
         return "EV"
     tokens = tokenizar(input)
+    if tokens == "ES":
+        return "ES"
     print(f"TOKENS DETECTADOS: {tokens}")
     salida = []
     operadores = []  # pila
@@ -192,6 +195,8 @@ def evaluar(input, previo):
 
     if tokens == "EP":
         return "Error de paréntesis"
+    elif tokens == "ES":
+        return "Error de sintaxis"
     elif tokens == "EV":
         return "Expresión no debe ser vacía"
 
@@ -223,31 +228,51 @@ def evaluar(input, previo):
             arg = float(arg)
             try:
                 # Ensure argument is a float before passing to math functions
-                if token == 'sin':
+                if token == 'sin':                                  #sin
                     pila.append(math.sin(arg))
-                elif token == 'cos':
+                elif token == 'cos':                                #cos
                     pila.append(math.cos(arg))
-                elif token == 'tan':
+                elif token == 'tan':                                #tan
                     pila.append(math.tan(arg))
-                elif token == 'asin':
+                elif token == 'asin':                               #asin
                     if arg > 1 or arg < -1:
-                        return "error de dominio para asin"
+                        return "error de dominio para ArcSin"
                     pila.append(math.asin(arg))
-                elif token == 'acos':
+                elif token == 'acos':                               #acos
                     if arg > 1 or arg < -1:
-                        return "error de dominio para acos"
+                        return "error de dominio para ArcCos"
                     pila.append(math.acos(arg))
-                elif token == 'atan':
+                elif token == 'atan':                               #atan
                     pila.append(math.atan(arg))
-                elif token == 'exp':
+                elif token == 'tanh':                               #tanh
+                    pila.append(math.tanh(arg))
+                elif token == 'sinh':                               #sinh
+                    pila.append(math.sinh(arg))
+                elif token == 'cosh':                               #cosh
+                    pila.append(math.cosh(arg))
+                elif token == 'exp':                                #exp
                     pila.append(math.exp(arg))
-                elif token == 'ln':
+                elif token == 'ln':                                 #ln
                     if arg <= 0:
                         return "Error de dominio para ln"
                     pila.append(math.log(arg))
-                elif token == '°':
+                elif token == '°':                                  #rad
                     #convertir grados a rads
                     pila.append(arg*math.pi/180)
+                elif token == 'log':                              #log10
+                    if arg <= 0:
+                        return "Error de dominio para log"
+                    pila.append(math.log10(arg))
+                elif token == 'asinh':                              #asinh
+                    pila.append(math.asinh(arg))
+                elif token == 'acosh':                              #acosh
+                    if arg < 1:
+                        return "Error de dominio para ArcCosH"
+                    pila.append(math.acosh(arg))
+                elif token == 'atanh':                              #atanh
+                    if arg >= 1 or arg <= -1:
+                        return "error de dominio para ArcTanH"
+                    pila.append(math.atanh(arg))
                 else:
                     return "Error, función no reconocida: " + str(arg)
             except ValueError as e:
