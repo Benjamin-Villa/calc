@@ -8,11 +8,11 @@ def deploy():
 @app.route("/evaluate", methods=['POST'])
 def calcular():
     try:
-        # 1. Obtener los datos JSON de la solicitud POST
+        # 1. Obtener JSON del Frontend
         data = request.get_json()
 
         if not data or 'expression' not in data:
-            # Si los datos no son JSON válidos o no contienen 'expression'
+            # Si hay error
             return jsonify({"error": "Formato de solicitud inválido. Se espera JSON con 'expression'."}), 400
 
         expression = data.get('expression')
@@ -21,10 +21,6 @@ def calcular():
         if not expression:
             # Si el campo 'expression' está vacío
             return jsonify({"error": "No se proporcionó ninguna expresión para evaluar."}), 400
-
-        # 2. Llamar a tu función de evaluación
-        # Asegúrate de que evaluarEcuación maneja sus propios errores internos
-        # y devuelve un valor (ej. float) si es exitoso, o None si hay un error
 
         result = logic.evaluar(expression,previo)
 
@@ -45,7 +41,7 @@ def calcular():
 
     except Exception as e:
         # Capturar cualquier otra excepción inesperada durante el manejo de la solicitud
-        print(f"Error inesperado en /evaluate: {e}")  # Log the error on the server side
+        print(f"Error inesperado en /evaluate: {e}")  # manejar error de backend
         return jsonify(
             {"error": f"Ocurrió un error interno del servidor: {str(e)}"}), 500  # Usar 500 Internal Server Error
 

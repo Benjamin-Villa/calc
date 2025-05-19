@@ -48,14 +48,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (this.checked) {
 
                 console.log('Checkbox marcado');
-                labelCheck.style.backgroundColor = '#ff5050'; // Ejemplo: fondo gris
-                labelCheck.style.color = 'white'; // Ejemplo: texto blanco
+                labelCheck.style.backgroundColor = '#ff5050';
+                labelCheck.style.color = 'white';
                 botonesShift.forEach(function(boton) {
-                    // Verifica que el botón existe antes de intentar cambiar su estil
-                                        // Checkbox marcado: Aplica los estilos deseados
                     const botonId = boton.id;
-                    boton.style.backgroundColor = '#ff5050'; // Ejemplo: fondo gris
-                    boton.style.color = 'white'; // Ejemplo: texto blanco
+                    boton.style.backgroundColor = '#ff5050';
+                    boton.style.color = 'white';
                     if (nombresArc[botonId]) {
                             // Almacenar el texto original en un atributo de datos (data attribute)
                             // para poder restaurarlo fácilmente después
@@ -68,48 +66,36 @@ document.addEventListener('DOMContentLoaded', function() {
                             boton.value = altVal[botonId]
                             boton.textContent = nombresArc[botonId];
                         }
-                                        // ... añade otras propiedades de estilo que quieras cambiar ...
                 });
             }else{
-                labelCheck.style.backgroundColor = ''; // Ejemplo: fondo gris
-                labelCheck.style.color = ''; // Ejemplo: texto blanco
-                labelCheck.style.border = ''; // Ejemplo: borde
+                labelCheck.style.backgroundColor = '';
+                labelCheck.style.color = '';
+                labelCheck.style.border = ''; // Volver a valores por defecto
                 botonesShift.forEach(function(boton) {
-
-                                        // Checkbox desmarcado: Restaura los estilos originales (o los por defecto)
-                                        // Puedes restaurar a un valor específico o a una cadena vacía para usar el estilo CSS por defecto
+                                        // Checkbox desmarcado: Restaura los estilos originales
                                         boton.style.backgroundColor = ''; // Restaura al estilo CSS o por defecto
                                         boton.style.color = '';
                                         boton.style.border = '';
-                                        // ... restaura otras propiedades ...
                     if (boton.dataset.originalText) {
                             boton.textContent = boton.dataset.originalText;
-                            // Opcional: eliminar el atributo de datos si ya no es necesario
-                            // delete boton.dataset.originalText;
                     }
                     if (boton.dataset.originalValue) {
                             boton.value = boton.dataset.originalValue;
-                            // Opcional: eliminar el atributo de datos si ya no es necesario
-                            // delete boton.dataset.originalText;
                     }
-
-
                 }
-
             );
     }});
 
-    // Función para evaluar la expresión (la lógica que se repite)
+    // Función para evaluar la expresión
     function evaluateExpression() {
         const expression = expressionInput.value;
 
-        // mostrar que se está calculando
         resultArea.textContent = 'Calculando...';
         resultArea.style.color = 'black';
 
         // fetch envía la expresión al backend python
-        fetch('/evaluate', { // /evaluate tiene que estar definido en la app.py
-            method: 'POST', // flask usa POST.
+        fetch('/evaluate', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json' // avisar que se envía un json
             },
@@ -117,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({ expression: expression , previo: prevRes}) // Convertir el objeto JavaScript a una cadena JSON
         })
         .then(response => {
-            // Respuesta cruda del servidor, es necesario revisar, en caso de que hubiera errores en la comunicación.
+            // Respuesta bruta del servidor, es necesario revisar, en caso de que hubiera errores en la comunicación.
 
             if (!response.ok) {
                 // si hay error, averiguar cual fue.

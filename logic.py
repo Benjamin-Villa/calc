@@ -200,9 +200,9 @@ def evaluar(input, previo):
     elif tokens == "EV":
         return "Expresión no debe ser vacía"
 
-    pila = []  # Stack for evaluation
+    pila = []  # pila para evaluar notacion polaca
 
-    for token in tokens:  # Iterate through RPN tokens, NOT the original input string
+    for token in tokens:
         if token.replace('.', '', 1).isdigit() or token in constanteMatematica:
             if token == 'π':
                 token = math.pi
@@ -213,11 +213,10 @@ def evaluar(input, previo):
                     return "Error: No hay resultado Previo"
                 else:
                     token = previo
-            # If the token is a number, push it as a float onto the evaluation stack
+            # Se obtiene valor, empilar como float
             print("NUEVO VALOR: " + str(token))
-            pila.append(float(token))  # Corrected: Convert to float
+            pila.append(float(token))
         elif token in funcionesUnitarias:
-            # If the token is a unary function
             if not pila:
                 return "Error de sintaxis"
             arg = pila.pop()
@@ -227,7 +226,6 @@ def evaluar(input, previo):
                 arg = math.pi
             arg = float(arg)
             try:
-                # Ensure argument is a float before passing to math functions
                 if token == 'sin':                                  #sin
                     pila.append(math.sin(arg))
                 elif token == 'cos':                                #cos
@@ -280,7 +278,6 @@ def evaluar(input, previo):
                 return None
 
         elif token in operadorBinario:
-            # If the token is a binary operator
             if len(pila) < 2 and token in {'+', '-'}:
                 arg = float(pila.pop())
                 if token == '-':
@@ -289,12 +286,9 @@ def evaluar(input, previo):
             elif len(pila) < 2 and token not in {'+', '-'}:
                 return "Error de sintaxis"
             else:
-
-                # Pop the two top elements (order matters for subtraction and division)
                 arg2 = float(pila.pop())
                 arg1 = float(pila.pop())
                 try:
-                    # Ensure arguments are floats before performing operations
                     if token == '+':
                         pila.append(arg1 + arg2)
                     elif token == '-':
@@ -314,7 +308,7 @@ def evaluar(input, previo):
                         if arg2 == 0:
                             return "Error, Módulo por cero"
                         pila.append(arg1 % arg2)
-                    elif token == '#':  # Integer division
+                    elif token == '#':
                         if arg2 == 0:
                             return "Error, división entera por cero"
                         pila.append(math.floor(arg1 / arg2))
@@ -322,11 +316,9 @@ def evaluar(input, previo):
                     return "Error evaluando operador " + token + " con argumentos " + str(arg1) + " op " + str(
                         arg2) + "e"
 
-    # After processing all RPN tokens, the result should be the only element left on the stack
-    # Moved this check OUTSIDE the for loop
+    # Si el proceso es correcto, debería haber un solo elemento en la pila
     if len(pila) == 1:
         print("RESULTADO = " + str(pila[0]))
         return str(pila[0])
     else:
-        # This indicates an issue with the RPN conversion or input
         return "Error: Expresión inválida"
