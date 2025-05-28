@@ -18,13 +18,12 @@
             </a><a href="graficar.html">
                 <button id="graficar" class="route">Graficar</button>
             </a>
-
-
-
-
         </div>
-        <h1>Calculadora</h1>
-        <input type="text" id="expression-input" placeholder="Expresión a calcular">
+        <h1>Integral de Riemann</h1>
+        <input type="text" id="expression-input" placeholder="Expresión f(x) a integrar">
+        <input type="text" id="interval-start" placeholder="Inicio del intervalo">
+        <input type="text" id="interval-end" placeholder="Fin del intervalo">
+        <input type="text" id="number" placeholder="Número de particiones">
         <div id="result-area"></div>
     </div>
 
@@ -67,6 +66,6 @@
     </div>
 
     <script src="{{ url_for('static', filename='global.js') }}"></script>
-<script src="{{ url_for('static', filename='calculator.js') }}"></script>
+<script src="{{ url_for('static', filename='integrar.js') }}"></script>
 </body>
 </html>
