@@ -17,7 +17,7 @@ def evaluar(tokens, previo):
     pila = []  # pila para evaluar notacion polaca
 
     for token in tokens:
-        if token.replace('.', '', 1).isdigit() or token in tokenizer.constanteMatematica:
+        if token.replace('.', '', 1).isdigit() or token in tokenizer.math_const:
             if token == 'π':
                 token = math.pi
             elif token == 'e':
@@ -30,7 +30,7 @@ def evaluar(tokens, previo):
             # Se obtiene valor, empilar como float
             print("NUEVO VALOR: " + str(token))
             pila.append(float(token))
-        elif token in tokenizer.funcionesUnitarias:
+        elif token in tokenizer.fun:
             if not pila:
                 return "Error de sintaxis"
             arg = pila.pop()
@@ -91,7 +91,7 @@ def evaluar(tokens, previo):
                 print(f"Error evaluando función {token} con argumento {str(arg)}: {e}")
                 return None
 
-        elif token in tokenizer.operadorBinario:
+        elif token in tokenizer.bin_op:
             if len(pila) < 2 and token in {'+', '-'}:
                 arg = float(pila.pop())
                 if token == '-':

@@ -1,134 +1,63 @@
-import math
+math_const = {"e", 'π', 'ans', 'x'}
 
-constanteMatematica = {"e", 'π', 'ans','x'}
+bin_op = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%': 2, '^': 4, 'log': 4}
+fun = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp', 'log', 'ln', '°'}
 
-operadorBinario = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%': 2, '^': 4, 'log': 4}
-funcionesUnitarias = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan','sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp','log', 'ln','°'}
-
-
-def tokenizar(ecuacion):
+def tokenizar(input):
     tokens = []
-    nuevoToken = ""
-    print("ECUACION A TOKENIZAR: " + ecuacion)
-    for char in ecuacion:
-        print("ANALIZANDO " + char)
-        if char.isdigit() or char == '.':
-            # Es o número entero o decimal
-            if nuevoToken.isalnum() and not nuevoToken.isdigit() and nuevoToken not in constanteMatematica: # no incluye parentesis
-                # Si nuevo token no se trata de letras, añadir el token a la pila y reiniciar
-                # nuevo token se trata definitivamente de una funcion o operador binario.
+    new = ''
+    for char in input:
+        if diferente_tipo(new,char) == 0:
+            #caso 0: omitir el nuevo y añadir
+            tokens.append(new)
+            print("NUEVO TOKEN: " + new)
+        if diferente_tipo(new, char) == 1:
+            #caso 1: añadir la cadena y el nuevo
+            tokens.append(new)
+            print("NUEVO TOKEN: ", new)
+            tokens.append(new)
+            print("NUEVO TOKEN: ", char)
+            new = ''
+        if diferente_tipo(new, char) == 2:
+            #caso 2: concatenar nuevo con cadena
+            new += char
 
-                if tokens:
-                    if tokens[-1] == ')':
-                        # en caso de multiplicacion implicita con parentesis
-                        print("Multiplicación implícita detectada, agregando *")
-                        tokens.append('*')
-                        print("NUEVO TOKEN: *")
-                # ejemplo: (5)tan1 = (5)*tan1
-
-                tokens.append(nuevoToken)
-                print("NUEVO TOKEN: " + nuevoToken)
-                nuevoToken = ""
-
-            elif '.' in nuevoToken and char == '.':
-                # se estaba construyendo numero, pero el numero ya contiene decimal
-                tokens.append(nuevoToken)
-                tokens.append('*')
-
-
-                # hay dos números, uno al lado del otro, se trata de multiplicación
-                #ejemplo 5.2.3 = 5.2*0.3
-                print("NUEVO TOKEN: " + nuevoToken)
-                print("Multiplicación implícita detectada, agregando *")
-                print("NUEVO TOKEN: *")
-                nuevoToken = "0"
-            nuevoToken += char
-        elif char in ['e','π']: # números especiales
-            if nuevoToken:  # Si ya tenía un token, añadirlo y reiniciar
-                tokens.append(nuevoToken)
-                print("NUEVO TOKEN: " + nuevoToken)
-
-                if nuevoToken not in funcionesUnitarias or nuevoToken != '(':
-                    print("Multiplicación implícita detectada, agregando *")
-                    print("NUEVO TOKEN: *")
-                    tokens.append('*')
-
-            nuevoToken = ""
-            tokens.append(char)
-
-
-
-        elif char in operadorBinario:
-            # Operador binario
-            if nuevoToken:  # Si ya tenía un token, añadirlo y reiniciar
-                tokens.append(nuevoToken)
-                print("NUEVO TOKEN: " + nuevoToken)
-                nuevoToken = ""
-            tokens.append(char)
-            print("NUEVO TOKEN: " + char)
-        elif char.isspace():
-            # Espacio significa reiniciar
-            if nuevoToken:
-                tokens.append(nuevoToken)
-                print("NUEVO TOKEN: " + nuevoToken)
-                nuevoToken = ""
-        elif char.isalpha() and not char.isdigit() or char == '.':
-            #Encuentro letra, definitivamente ningun numero
-            if nuevoToken.isdigit() or nuevoToken.count('.') == 1:
-                # si estaba haciendo un número, añadir a token y reiniciar
-                tokens.append(nuevoToken)
-                print("NUEVO TOKEN: " + nuevoToken)
-                print("Multiplicación implícita detectada, agregando *")
-                tokens.append('*')
-                nuevoToken = ""
-
-            if tokens:
-                if tokens[-1] == ')':
-                    #en caso de multiplicacion implicita con parentesis
-                    tokens.append('*')
-                    print("NUEVO TOKEN: *")
-
-
-            nuevoToken += char
-        elif char in {"(", ")"}:
-            # Paréntesis
-            if nuevoToken:  # Si estaba haciendo algo, guardarlo y reiniciar.
-                tokens.append(nuevoToken)
-                print("NUEVO TOKEN: " + nuevoToken)
-
-                if (tokens[-1] not in operadorBinario  and tokens[-1] not in funcionesUnitarias
-                        and tokens[-1] != '(' and char == '('):
-                    #si el último token es un número adyacente al paréntesis, o se trata de una función compuesta.
-                    #se trata de multiplicación implícita.
-                    tokens.append('*')
-                    print("NUEVO TOKEN: *")
-
-                nuevoToken = ""
-            tokens.append(char)
-            print("NUEVO TOKEN: " + char)
-        elif char == '°':
-            #conversor rads a grados
-            if nuevoToken:  # Si estaba haciendo algo, guardarlo y reiniciar.
-                tokens.append(nuevoToken)
-                print("NUEVO TOKEN: " + nuevoToken)
-                nuevoToken = ""
-            tokens.append('°')
-            print("NUEVO TOKEN: °")
-        else:
-            return "ES"
-            pass
-
-    # Añadir token al final
-    if nuevoToken:
-        if tokens:
-            if tokens[-1] == ')':
-                tokens.append('*')
-                print("NUEVO TOKEN: *")
-
-        tokens.append(nuevoToken)
-        print("NUEVO TOKEN: " + nuevoToken)
-    print(f"TOKENS FINALES: {tokens}")
+    tokens.append(new)
     return tokens
+
+def diferente_tipo(cadena,comp):
+    #Explicación de output
+    if comp in bin_op :
+        return 1
+    if comp in {'(',')'}:
+        return 1
+    if comp.isspace():
+        return 0
+    if cadena in math_const:
+        return 1
+    if comp == '°':
+        return 1
+    if cadena.isalpha():
+        if not comp.isalpha():
+            return 2
+    if cadena.isdigit():
+        if comp == '.':
+            return 2
+        if comp.isdigit():
+            return 2
+    if cadena.isdecimal():
+        if comp.isdigit():
+            return 2
+    return False
+
+
+
+def es_numero(input):
+     if input in math_const:
+         return True
+     if input.replace('.','').isdigit():
+         return True
+     return False
 
 
 def polaca_inversa(input):
@@ -143,20 +72,20 @@ def polaca_inversa(input):
     operadores = []  # pila
 
     def precedencia(op):
-        return operadorBinario.get(op, 0) # Prioridad de operaciones, 0 por defecto
+        return bin_op.get(op, 0) # Prioridad de operaciones, 0 por defecto
 
     print(F"CONSTRUCCION NPI DE: {tokens}")
 
     for token in tokens:
-        if token.replace('.', '', -1).isdigit() or token in constanteMatematica:
+        if token.replace('.', '', -1).isdigit() or token in math_const:
             # Si es un número, sin importar si es decimal
             salida.append(token)
             print("NUEVO VALOR: " + token)
-        elif token in funcionesUnitarias:
+        elif token in fun:
             # Si es función, añadir a la pila
             operadores.append(token)
             print("NUEVA FUNCION: " + token)
-        elif token in operadorBinario:
+        elif token in bin_op:
             # Si tenemos operador
             while (operadores and
                    operadores[-1] != '(' and
@@ -173,7 +102,7 @@ def polaca_inversa(input):
                 salida.append(operadores.pop())
             if operadores and operadores[-1] == '(':
                 operadores.pop()
-            if operadores and operadores[-1] in funcionesUnitarias:
+            if operadores and operadores[-1] in fun:
                 salida.append(operadores.pop())
             #llevar cuenta de los paréntesis
 
