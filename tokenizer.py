@@ -4,32 +4,58 @@ bin_op = {'+': 1, '-': 1, '*': 3, '/': 3, '#': 2, '%': 2, '^': 4, 'log': 4}
 fun = {'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'asinh', 'acosh', 'atanh', 'exp', 'log', 'ln', '°'}
 
 def tokenizar(input):
+
+    clean = input.lower().replace(' ', '')
+    print("ECUACION: ", clean)
     tokens = []
     new = ''
-    for char in input:
-        if diferente_tipo(new,char) == 0:
-            #caso 0: omitir el nuevo y añadir
-            tokens.append(new)
-            print("NUEVO TOKEN: " + new)
+    for char in clean:
+        print("check: ",char)
         if diferente_tipo(new, char) == 1:
             #caso 1: añadir la cadena y el nuevo
-            tokens.append(new)
-            print("NUEVO TOKEN: ", new)
-            tokens.append(new)
-            print("NUEVO TOKEN: ", char)
+            if new:
+                tokens.append(new)
+                print("NUEVO TOKEN: ", new)
+            if char:
+                tokens.append(char)
+                print("NUEVO TOKEN: ", char)
             new = ''
-        if diferente_tipo(new, char) == 2:
+        elif diferente_tipo(new, char) == 2:
             #caso 2: concatenar nuevo con cadena
             new += char
+        elif diferente_tipo(new, char) == 3:
+            #caso 3: multiplicación implícita
+            tokens.append(new)
+            tokens.append('*')
+            tokens.append(char)
+            print("NUEVO TOKEN: multiplicacion entre: ", new, " * ",char)
+        elif diferente_tipo(new, char) == 4:
+            tokens.append(new)
+            print("NUEVO TOKEN: ", new)
+            new = char
 
     tokens.append(new)
+    print("NUEVO TOKEN: ", new)
+
     return tokens
 
 def diferente_tipo(cadena,comp):
     #Explicación de output
+    # retornar 1 implica añadir la cadena creada y añadir el nuevo char.
+    # retornar 2 concatena el nuevo caracter a la cadena
+    # retornar 3 implica que existe multiplicación implicita entre el token creado y el nuevo caracter
+    # retornar 4 significa añadir el nuevo token, y empezar a construir otro a base del char
     if comp in bin_op :
         return 1
-    if comp in {'(',')'}:
+    if cadena == '':
+        return 2
+
+
+    if comp == ')':
+        return 1
+    if comp =='(':
+        if cadena.isdecimal() or cadena in math_const or cadena == ')':
+            return 3
         return 1
     if comp.isspace():
         return 0
@@ -38,8 +64,9 @@ def diferente_tipo(cadena,comp):
     if comp == '°':
         return 1
     if cadena.isalpha():
-        if not comp.isalpha():
+        if comp.isalpha():
             return 2
+        return 1
     if cadena.isdigit():
         if comp == '.':
             return 2
