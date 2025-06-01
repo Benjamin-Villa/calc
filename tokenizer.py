@@ -39,52 +39,14 @@ def tokenizar(input):
 
     return tokens
 
-def diferente_tipo(cadena,comp):
-    #Explicación de output
+
+def diferente_tipo(cadena, comp):
+    # Explicación de output
     # retornar 1 implica añadir la cadena creada y añadir el nuevo char.
     # retornar 2 concatena el nuevo caracter a la cadena
     # retornar 3 implica que existe multiplicación implicita entre el token creado y el nuevo caracter
     # retornar 4 significa añadir el nuevo token, y empezar a construir otro a base del char
-    if comp in bin_op :
-        return 1
-    if cadena == '':
-        return 2
 
-
-    if comp == ')':
-        return 1
-    if comp =='(':
-        if cadena.isdecimal() or cadena in math_const or cadena == ')':
-            return 3
-        return 1
-    if comp.isspace():
-        return 0
-    if cadena in math_const:
-        return 1
-    if comp == '°':
-        return 1
-    if cadena.isalpha():
-        if comp.isalpha():
-            return 2
-        return 1
-    if cadena.isdigit():
-        if comp == '.':
-            return 2
-        if comp.isdigit():
-            return 2
-    if cadena.isdecimal():
-        if comp.isdigit():
-            return 2
-    return False
-
-
-
-def es_numero(input):
-     if input in math_const:
-         return True
-     if input.replace('.','').isdigit():
-         return True
-     return False
 
 
 def polaca_inversa(input):
